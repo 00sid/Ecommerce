@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "696166135470",
+    "project_id": "ecom-f0ade",
+    "storage_bucket": "ecom-f0ade.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:696166135470:android:64e4f791e90b5717309f3f",
+        "android_client_info": {
+          "package_name": "com.sidd.ecom"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCbvKdT0dsntolTO73F839Ic8x3CZ3__lU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
