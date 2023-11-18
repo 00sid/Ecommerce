@@ -75,6 +75,7 @@ class _WebLoginScreenState extends State<WebLoginScreen> {
                         isPass: true,
                         textInputType: TextInputType.text),
                     EcomButton(
+                        loading: isLoading,
                         child: "Login",
                         ontap: () {
                           if (_formkey.currentState!.validate()) {
@@ -112,9 +113,6 @@ class _WebLoginScreenState extends State<WebLoginScreen> {
             // ignore: use_build_context_synchronously
             Navigator.pushReplacementNamed(context, WebMain.id);
           }
-          setState(() {
-            isLoading = false;
-          });
         } on FirebaseAuthException catch (e) {
           toastMessage(e.toString());
         }

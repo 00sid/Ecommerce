@@ -1,9 +1,11 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ecom/services/auth_services.dart';
 import 'package:ecom/utils/style.dart';
+import 'package:ecom/widgets/alert_dialogue.dart';
 import 'package:ecom/widgets/home_card.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_iconly/flutter_iconly.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -30,6 +32,21 @@ class _HomeScreenState extends State<HomeScreen> {
     "https://cdn.pixabay.com/photo/2019/06/03/02/54/skull-4248008_640.jpg",
     "https://cdn.pixabay.com/photo/2019/10/27/22/15/halloween-4582988_640.jpg",
   ];
+  void showDiaglueBox(
+    String text,
+    String text2,
+  ) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return DialogueBox(
+            text: text,
+            text2: text2,
+            action: () {},
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,6 +110,16 @@ class _HomeScreenState extends State<HomeScreen> {
               )
             ],
           ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showDiaglueBox("Are you sure to log out ?", "Log out");
+        },
+        splashColor: Colors.red,
+        backgroundColor: Colors.deepOrange,
+        child: const Icon(
+          IconlyBold.lock,
         ),
       ),
     );

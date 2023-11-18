@@ -1,17 +1,42 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecom/models/productModel.dart';
 import 'package:ecom/screens/web_side/screen/single_item_update_screen.dart';
+import 'package:ecom/services/database_services.dart';
 import 'package:ecom/utils/style.dart';
 import 'package:ecom/utils/utils.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:ecom/widgets/alert_dialogue.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:page_transition/page_transition.dart';
 
-class UpdateProductScreen extends StatelessWidget {
+class UpdateProductScreen extends StatefulWidget {
   static const String id = "updatescreen";
   const UpdateProductScreen({super.key});
+
+  @override
+  State<UpdateProductScreen> createState() => _UpdateProductScreenState();
+}
+
+class _UpdateProductScreenState extends State<UpdateProductScreen> {
+  final DataBase _db = DataBase();
+  void showDiaglueBox(String text, String text2, String id) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return DialogueBox(
+            text: text,
+            text2: text2,
+            action: () async {
+              await _db.deleteAndRestoreItem(id, "products", "deletedItem");
+              // ignore: use_build_context_synchronously
+              Navigator.pop(context);
+              // ignore: use_build_context_synchronously
+              showSnackBar("Deleted Successfully", context);
+            },
+          );
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,10 +103,12 @@ class UpdateProductScreen extends StatelessWidget {
                                       width: 20,
                                     ),
                                     IconButton(
-                                        onPressed: () async {
-                                          await deleteItem(data[index]["id"]);
-                                          showSnackBar(
-                                              "Deleted Successfully", context);
+                                        onPressed: () {
+                                          showDiaglueBox(
+                                            "Are you sure to delete?",
+                                            "Delete",
+                                            data[index]["id"],
+                                          );
                                         },
                                         icon: const Icon(
                                           IconlyBold.delete,
