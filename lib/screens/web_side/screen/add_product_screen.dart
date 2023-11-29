@@ -1,7 +1,7 @@
 import 'dart:io';
 
+import 'package:ecom/models/categoryModel.dart';
 import 'package:ecom/models/productModel.dart';
-import 'package:ecom/screens/home_screen.dart';
 import 'package:ecom/screens/web_side/webwidgets/add_post_textfield.dart';
 import 'package:ecom/utils/style.dart';
 import 'package:ecom/utils/utils.dart';
@@ -212,7 +212,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
           },
           value: selectedValue,
           items: categories
-              .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+              .map((e) =>
+                  DropdownMenuItem(value: e.title, child: Text(e.title!)))
               .toList(),
           onChanged: (value) {
             setState(() {

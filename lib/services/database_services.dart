@@ -33,4 +33,15 @@ class DataBase {
       toastMessage(e.toString());
     }
   }
+
+  Future<List<QueryDocumentSnapshot>?> fetchData() async {
+    try {
+      QuerySnapshot snap =
+          await FirebaseFirestore.instance.collection("product").get();
+
+      return snap.docs;
+    } catch (e) {
+      toastMessage(e.toString());
+    }
+  }
 }

@@ -99,10 +99,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("or with"),
+                      const Text("or with"),
                       TextButton(
                         onPressed: () {},
-                        child: Text("phone number"),
+                        child: const Text("phone number"),
                       ),
                     ],
                   ),

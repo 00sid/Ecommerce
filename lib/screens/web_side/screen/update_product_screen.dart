@@ -127,19 +127,4 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
       ),
     );
   }
-
-  deleteItem(String id) async {
-    final sourceRef = FirebaseFirestore.instance.collection("products");
-    final destiRef = FirebaseFirestore.instance.collection("deletedItem");
-    try {
-      DocumentSnapshot snapshot = await sourceRef.doc(id).get();
-      if (snapshot.exists) {
-        Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
-        await destiRef.doc(id).set(data);
-      } else {
-        print("Document doesnot exist");
-      }
-      sourceRef.doc(id).delete();
-    } catch (e) {}
-  }
 }

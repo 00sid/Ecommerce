@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ecom/models/categoryModel.dart';
 import 'package:ecom/models/productModel.dart';
 import 'package:ecom/screens/home_screen.dart';
 import 'package:ecom/screens/web_side/webwidgets/add_post_textfield.dart';
@@ -15,6 +16,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:sizer/sizer.dart';
 import 'package:uuid/uuid.dart';
 
+// ignore: must_be_immutable
 class SingleUpdateScreen extends StatefulWidget {
   static const String id = "singleupdateproduct";
   Product? product;
@@ -236,7 +238,8 @@ class _SingleUpdateScreenState extends State<SingleUpdateScreen> {
           },
           value: selectedValue,
           items: categories
-              .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+              .map((e) =>
+                  DropdownMenuItem(value: e.title, child: Text(e.title!)))
               .toList(),
           onChanged: (value) {
             setState(() {

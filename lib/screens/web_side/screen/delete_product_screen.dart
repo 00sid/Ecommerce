@@ -1,6 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ecom/models/productModel.dart';
-import 'package:ecom/screens/web_side/screen/single_item_update_screen.dart';
 import 'package:ecom/services/database_services.dart';
 import 'package:ecom/utils/style.dart';
 import 'package:ecom/utils/utils.dart';
@@ -8,7 +6,6 @@ import 'package:ecom/widgets/alert_dialogue.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:page_transition/page_transition.dart';
 
 class DeleteProductScreen extends StatefulWidget {
   static const String id = "deletescreen";

@@ -1,8 +1,10 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ecom/models/productModel.dart';
 import 'package:ecom/services/auth_services.dart';
-import 'package:ecom/utils/style.dart';
+import 'package:ecom/services/database_services.dart';
 import 'package:ecom/widgets/alert_dialogue.dart';
-import 'package:ecom/widgets/home_card.dart';
+import 'package:ecom/widgets/category_home_boxer.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
@@ -14,16 +16,17 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-List categories = [
-  "GROCERY",
-  "ELECTRONICS",
-  "COSMETICS",
-  "PHARMACY",
-  "GARMENT",
-];
+// List categories = [
+//   "GROCERY",
+//   "ELECTRONICS",
+//   "COSMETICS",
+//   "PHARMACY",
+//   "GARMENT",
+// ];
 
 class _HomeScreenState extends State<HomeScreen> {
   final AuthServices _authServices = AuthServices();
+  // final DataBase _db = DataBase();
 
   final List images = [
     "https://media.istockphoto.com/id/1427555254/photo/halloween-table-old-wooden-plank-with-orange-pumpkin-in-purple-landscape-with-moonlight.jpg?s=1024x1024&w=is&k=20&c=N5fSjkehVVedXbUXPzqHgPbrDnTXR7xC4h5XRYh70zY=",
@@ -32,6 +35,15 @@ class _HomeScreenState extends State<HomeScreen> {
     "https://cdn.pixabay.com/photo/2019/06/03/02/54/skull-4248008_640.jpg",
     "https://cdn.pixabay.com/photo/2019/10/27/22/15/halloween-4582988_640.jpg",
   ];
+  List<Product> allProduct = [];
+  List<String> imageUrls = [];
+
+  @override
+  void initState() {
+    getData();
+    super.initState();
+  }
+
   void showDiaglueBox(
     String text,
     String text2,
@@ -54,60 +66,33 @@ class _HomeScreenState extends State<HomeScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              const Center(
-                child: Text(
-                  "Home Screen",
-                  style: EcomStyle.kBoldStyle,
+              RichText(
+                text: const TextSpan(
+                  children: [
+                    TextSpan(
+                      text: "ECOM",
+                      style: TextStyle(
+                        fontSize: 27,
+                        color: Colors.deepPurple,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    TextSpan(
+                      text: "  BUY",
+                      style: TextStyle(
+                        fontSize: 27,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              CarouselSlider(
-                items: images
-                    .map((e) => Stack(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(15),
-                              child: FancyShimmerImage(
-                                imageUrl: e,
-                              ),
-                            ),
-                            Positioned(
-                              bottom: 10,
-                              left: 10,
-                              child: Container(
-                                color: Colors.black.withOpacity(0.6),
-                                child: const Text(
-                                  "TITLE",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ))
-                    .toList(),
-                options: CarouselOptions(
-                  height: 200,
-                  autoPlay: true,
-                  enlargeCenterPage: true,
-                ),
-              ),
+              const CategoryHomeBoxes(),
+              SliderImages(images: images),
               const SizedBox(
                 height: 20,
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                child: Column(
-                  children: [
-                    HomeCard(title: categories[0]),
-                    HomeCard(title: categories[1]),
-                    HomeCard(title: categories[2]),
-                    HomeCard(title: categories[3]),
-                    HomeCard(title: categories[4]),
-                  ],
-                ),
-              )
             ],
           ),
         ),
@@ -127,5 +112,78 @@ class _HomeScreenState extends State<HomeScreen> {
 
   signOut() async {
     await _authServices.signOut();
+  }
+
+  getData() async {
+    await FirebaseFirestore.instance
+        .collection('products')
+        .get()
+        .then((QuerySnapshot? snapshot) {
+      setState(() {
+        snapshot!.docs.forEach((e) {
+          allProduct.add(
+              Product.fromJson(e as DocumentSnapshot<Map<String, dynamic>>)!);
+        });
+        for (var i in allProduct) {
+          for (var e in i.imageUrls) {
+            imageUrls.add(e);
+          }
+        }
+      });
+    });
+  }
+  // getData() async {
+  //   final snap = await _db.fetchData();
+  //   final List data = snap!.map(
+  //       (e) => {Product.fromJson(e as DocumentSnapshot<Map<String, dynamic>>)}).toList();
+  //   setState(() {
+  //     allProduct = data;
+  //   });
+  // }
+}
+
+class SliderImages extends StatelessWidget {
+  const SliderImages({
+    super.key,
+    required this.images,
+  });
+
+  final List images;
+
+  @override
+  Widget build(BuildContext context) {
+    return CarouselSlider(
+      items: images
+          .map((e) => Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: FancyShimmerImage(
+                      imageUrl: e,
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 10,
+                    left: 10,
+                    child: Container(
+                      color: Colors.black.withOpacity(0.6),
+                      child: const Text(
+                        "TITLE",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20),
+                      ),
+                    ),
+                  ),
+                ],
+              ))
+          .toList(),
+      options: CarouselOptions(
+        height: 200,
+        autoPlay: true,
+        enlargeCenterPage: true,
+      ),
+    );
   }
 }
