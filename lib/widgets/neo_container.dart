@@ -51,11 +51,12 @@ class _NeoContainerState extends State<NeoContainer> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
-                  height: 15.h,
-                  width: 12.w,
+                  height: 10.h,
+                  width: 22.w,
                   // child: Image.network("https://i.ibb.co/vwB46Yq/shoes.png"),
-                  child:
-                      FancyShimmerImage(imageUrl: widget.product.imageUrls[0]),
+                  child: FancyShimmerImage(
+                      imageUrl: widget.product.imageUrls[0],
+                      boxFit: BoxFit.fill),
                 ),
               ),
             ],
@@ -67,7 +68,7 @@ class _NeoContainerState extends State<NeoContainer> {
                   children: [
                     TextSpan(
                       text: "Name: ",
-                      style: TextStyle(fontSize: 3.5.sp),
+                      style: const TextStyle(color: Colors.black),
                       children: [
                         TextSpan(
                           text: widget.product.productName + "\n",
@@ -76,6 +77,7 @@ class _NeoContainerState extends State<NeoContainer> {
                     ),
                     TextSpan(
                       text: "Price: Rs ",
+                      style: const TextStyle(color: Colors.black),
                       children: [
                         TextSpan(text: widget.product.price.toString()),
                       ],

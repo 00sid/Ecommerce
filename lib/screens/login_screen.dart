@@ -123,7 +123,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   GestureDetector(
                     onTap: () {
                       Navigator.of(context).push(PageTransition(
-                        child: SignupScreen(),
+                        child: const SignupScreen(),
                         type: PageTransitionType.fade,
                       ));
                     },

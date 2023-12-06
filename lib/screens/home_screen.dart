@@ -1,13 +1,16 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecom/models/productModel.dart';
+import 'package:ecom/screens/product_detail_screen.dart';
 import 'package:ecom/services/auth_services.dart';
-import 'package:ecom/services/database_services.dart';
 import 'package:ecom/widgets/alert_dialogue.dart';
 import 'package:ecom/widgets/category_home_boxer.dart';
+import 'package:ecom/widgets/neo_container.dart';
+import 'package:ecom/widgets/product_item_layout.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
+import 'package:page_transition/page_transition.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -36,7 +39,13 @@ class _HomeScreenState extends State<HomeScreen> {
     "https://cdn.pixabay.com/photo/2019/10/27/22/15/halloween-4582988_640.jpg",
   ];
   List<Product> allProduct = [];
-  List<String> imageUrls = [];
+  List<String> onSaleimageUrls = [];
+  List<Product> onSaleProducts = [];
+  List<Product> groceryProducts = [];
+  List<Product> electronicsProducts = [];
+  List<Product> garmentProducts = [];
+  List<Product> pharmacyProducts = [];
+  List<Product> cosmeticsProducts = [];
 
   @override
   void initState() {
@@ -63,8 +72,12 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
+        child: RefreshIndicator(
+          onRefresh: () async {
+            await refreshHandle();
+          },
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               RichText(
                 text: const TextSpan(
@@ -88,23 +101,38 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
-              const CategoryHomeBoxes(),
-              SliderImages(images: images),
-              const SizedBox(
-                height: 20,
-              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      CategoryHomeBoxes(
+                        product: allProduct,
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      const Text(
+                        "ON SALE PRODUCTS",
+                        style: TextStyle(
+                          fontSize: 19,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      SliderImages(product: onSaleProducts),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      const Text("ALL PRODUCTS"),
+                      ProductLayout(product: allProduct),
+                    ],
+                  ),
+                ),
+              )
             ],
           ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showDiaglueBox("Are you sure to log out ?", "Log out");
-        },
-        splashColor: Colors.red,
-        backgroundColor: Colors.deepOrange,
-        child: const Icon(
-          IconlyBold.lock,
         ),
       ),
     );
@@ -125,12 +153,32 @@ class _HomeScreenState extends State<HomeScreen> {
               Product.fromJson(e as DocumentSnapshot<Map<String, dynamic>>)!);
         });
         for (var i in allProduct) {
-          for (var e in i.imageUrls) {
-            imageUrls.add(e);
+          // for (var e in i.imageUrls) {
+          //   imageUrls.add(e);
+          // }
+          if (i.isOnSale == true) {
+            onSaleProducts.add(i);
+          } else if (i.category == "GROCERY") {
+            groceryProducts.add(i);
+          } else if (i.category == "ELECTRONICS") {
+            electronicsProducts.add(i);
+            print("Nepal");
+          } else if (i.category == "GARMENT") {
+            garmentProducts.add(i);
+          } else if (i.category == "PHARMACY") {
+            pharmacyProducts.add(i);
           }
         }
       });
     });
+  }
+
+  Future<void> refreshHandle() async {
+    setState(() {
+      allProduct = [];
+      onSaleProducts = [];
+    });
+    await getData();
   }
   // getData() async {
   //   final snap = await _db.fetchData();
@@ -143,23 +191,20 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class SliderImages extends StatelessWidget {
-  const SliderImages({
-    super.key,
-    required this.images,
-  });
+  const SliderImages({super.key, required this.product});
 
-  final List images;
+  final List<Product> product;
 
   @override
   Widget build(BuildContext context) {
     return CarouselSlider(
-      items: images
+      items: product
           .map((e) => Stack(
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(15),
                     child: FancyShimmerImage(
-                      imageUrl: e,
+                      imageUrl: e.imageUrls[1],
                     ),
                   ),
                   Positioned(
@@ -167,9 +212,9 @@ class SliderImages extends StatelessWidget {
                     left: 10,
                     child: Container(
                       color: Colors.black.withOpacity(0.6),
-                      child: const Text(
-                        "TITLE",
-                        style: TextStyle(
+                      child: Text(
+                        e.productName,
+                        style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: 20),
